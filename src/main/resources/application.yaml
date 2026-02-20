@@ -1,3 +1,6 @@
 spring:
   application:
     name: maple
+
+server:
+  port: 8081
