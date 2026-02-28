@@ -1,6 +1,10 @@
+server:
+  port: 8080
+
 spring:
   application:
-    name: maple
+    name: maple-backend
 
-server:
-  port: 8081
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:./db/mindmap.db
