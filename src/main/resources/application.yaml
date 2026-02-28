@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: maple-backend
+    name: maple
 
   datasource:
     driver-class-name: org.sqlite.JDBC
