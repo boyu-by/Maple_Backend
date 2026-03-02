@@ -35,6 +35,12 @@ public class MindMapService {
         return toDto(saved);
     }
 
+    public MindMapDTO getMindMap(Long mindMapId) {
+        MindMapEntity entity = mindMapRepository.findById(mindMapId)
+                .orElseThrow(() -> new EntityNotFoundException("MindMap not found: " + mindMapId));
+        return toDto(entity);
+    }
+
     public void updateLayoutDirection(Long mindMapId, String layoutDirection) {
         MindMapEntity entity = mindMapRepository.findById(mindMapId)
                 .orElseThrow(() -> new EntityNotFoundException("MindMap not found: " + mindMapId));

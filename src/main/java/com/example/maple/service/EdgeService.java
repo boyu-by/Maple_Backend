@@ -5,6 +5,7 @@ import com.example.maple.model.entity.EdgeEntity;
 import com.example.maple.model.entity.MindMapEntity;
 import com.example.maple.model.entity.NodeEntity;
 import com.example.maple.repository.EdgeRepository;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,12 @@ public class EdgeService {
 
         EdgeEntity saved = edgeRepository.save(entity);
         return toDto(saved);
+    }
+
+    public List<EdgeDTO> getEdgesByMindMapId(Long mindMapId) {
+        return edgeRepository.findByMindMapId(mindMapId).stream()
+                .map(this::toDto)
+                .toList();
     }
 
     public void deleteEdge(Long edgeId) {

@@ -38,6 +38,12 @@ public class NodeService {
         return toDto(saved);
     }
 
+    public List<NodeDTO> getNodesByMindMapId(Long mindMapId) {
+        return nodeRepository.findByMindMapId(mindMapId).stream()
+                .map(this::toDto)
+                .toList();
+    }
+
     public void updateNodeContent(Long nodeId, String content) {
         NodeEntity entity = nodeRepository.findById(nodeId)
                 .orElseThrow(() -> new EntityNotFoundException("Node not found: " + nodeId));
