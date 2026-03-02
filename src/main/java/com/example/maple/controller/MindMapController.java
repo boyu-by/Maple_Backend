@@ -7,7 +7,10 @@ import com.example.maple.service.EdgeService;
 import com.example.maple.service.MindMapService;
 import com.example.maple.service.NodeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.Data;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,12 +43,22 @@ public class MindMapController {
 
     @PostMapping
     @Operation(summary = "Create mind map", description = "Create a new mind map.")
-    public MindMapDTO createMindMap(@RequestBody MindMapDTO request) {
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    public MindMapDTO createMindMap(@Valid @RequestBody MindMapDTO request) {
         return mindMapService.createMindMap(request.getTitle());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get mind map", description = "Get a mind map with its nodes and edges.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
     public MindMapDetailDTO getMindMap(@PathVariable("id") Long id) {
         MindMapDTO mindMap = mindMapService.getMindMap(id);
         List<NodeDTO> nodes = nodeService.getNodesByMindMapId(id);
@@ -59,12 +72,22 @@ public class MindMapController {
 
     @PutMapping("/{id}/layout")
     @Operation(summary = "Update layout", description = "Update layout direction of a mind map.")
-    public void updateLayoutDirection(@PathVariable("id") Long id, @RequestBody MindMapDTO request) {
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    public void updateLayoutDirection(@PathVariable("id") Long id, @Valid @RequestBody MindMapDTO request) {
         mindMapService.updateLayoutDirection(id, request.getLayoutDirection());
     }
 
     @DeleteMapping("/{id}/clear")
     @Operation(summary = "Clear mind map", description = "Remove all nodes and edges from a mind map.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
     public void clearMindMap(@PathVariable("id") Long id) {
         mindMapService.clearMindMap(id);
     }
