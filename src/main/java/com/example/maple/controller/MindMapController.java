@@ -1,52 +1,78 @@
 package com.example.maple.controller;
 
-import com.example.maple.logger.ErrorLogger;
-import com.example.maple.model.MindMapData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.example.maple.model.dto.EdgeDTO;
+import com.example.maple.model.dto.MindMapDTO;
+import com.example.maple.model.dto.NodeDTO;
+import com.example.maple.service.EdgeService;
+import com.example.maple.service.MindMapService;
+import com.example.maple.service.NodeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import lombok.Data;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/mindmap")
+@RequestMapping("/api/mind-maps")
+@Tag(name = "MindMap")
 public class MindMapController {
 
-    @Autowired
-    private ErrorLogger errorLogger;
+    private final MindMapService mindMapService;
+    private final NodeService nodeService;
+    private final EdgeService edgeService;
 
-    @GetMapping("/data")
-    public ResponseEntity<Map<String, String>> getMindMapData() {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "请使用客户端本地存储管理思维导图数据");
-        return ResponseEntity.ok(response);
+    public MindMapController(
+            MindMapService mindMapService,
+            NodeService nodeService,
+            EdgeService edgeService
+    ) {
+        this.mindMapService = mindMapService;
+        this.nodeService = nodeService;
+        this.edgeService = edgeService;
     }
 
-    @PostMapping("/data")
-    public ResponseEntity<MindMapData> loadMindMapData(@RequestBody MindMapData mindMapData) {
-        return ResponseEntity.ok(mindMapData);
+    @PostMapping
+    @Operation(summary = "Create mind map", description = "Create a new mind map.")
+    public MindMapDTO createMindMap(@RequestBody MindMapDTO request) {
+        return mindMapService.createMindMap(request.getTitle());
     }
 
-    @PostMapping("/clear")
-    public ResponseEntity<Map<String, String>> clearCanvas() {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "画布已清空（请在客户端执行清空操作）");
-        return ResponseEntity.ok(response);
+    @GetMapping("/{id}")
+    @Operation(summary = "Get mind map", description = "Get a mind map with its nodes and edges.")
+    public MindMapDetailDTO getMindMap(@PathVariable("id") Long id) {
+        MindMapDTO mindMap = mindMapService.getMindMap(id);
+        List<NodeDTO> nodes = nodeService.getNodesByMindMapId(id);
+        List<EdgeDTO> edges = edgeService.getEdgesByMindMapId(id);
+        MindMapDetailDTO response = new MindMapDetailDTO();
+        response.setMindMap(mindMap);
+        response.setNodes(nodes);
+        response.setEdges(edges);
+        return response;
     }
 
-    @GetMapping("/layout")
-    public ResponseEntity<Map<String, String>> getLayoutDirection() {
-        Map<String, String> response = new HashMap<>();
-        response.put("direction", "left-right");
-        return ResponseEntity.ok(response);
+    @PutMapping("/{id}/layout")
+    @Operation(summary = "Update layout", description = "Update layout direction of a mind map.")
+    public void updateLayoutDirection(@PathVariable("id") Long id, @RequestBody MindMapDTO request) {
+        mindMapService.updateLayoutDirection(id, request.getLayoutDirection());
     }
 
-    @PostMapping("/layout")
-    public ResponseEntity<Map<String, String>> setLayoutDirection(@RequestParam("direction") String direction) {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "布局方向已设置为: " + direction);
-        response.put("direction", direction);
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/{id}/clear")
+    @Operation(summary = "Clear mind map", description = "Remove all nodes and edges from a mind map.")
+    public void clearMindMap(@PathVariable("id") Long id) {
+        mindMapService.clearMindMap(id);
+    }
+
+    @Data
+    private static class MindMapDetailDTO {
+        private MindMapDTO mindMap;
+        private List<NodeDTO> nodes;
+        private List<EdgeDTO> edges;
     }
 }
