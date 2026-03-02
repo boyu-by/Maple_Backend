@@ -1,4 +1,4 @@
-package model.entity;
+package com.example.maple.model.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

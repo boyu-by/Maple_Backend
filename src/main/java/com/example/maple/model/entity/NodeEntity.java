@@ -1,4 +1,4 @@
-package model.entity;
+package com.example.maple.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
