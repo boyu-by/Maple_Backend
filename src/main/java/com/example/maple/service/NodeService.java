@@ -26,11 +26,11 @@ public class NodeService {
         this.edgeRepository = edgeRepository;
     }
 
-    public NodeDTO createNode(Long mindMapId, Long parentNodeId, String content, Double x, Double y) {
+    public NodeDTO createNode(String text, Double x, Double y, String parentId) {
         NodeEntity entity = new NodeEntity();
-        entity.setMindMapId(mindMapId);
-        entity.setParentNodeId(parentNodeId);
-        entity.setContent(content);
+        // TODO: Set mindMapId from context or request
+        entity.setParentNodeId(parentId != null ? Long.parseLong(parentId) : null);
+        entity.setContent(text);
         entity.setX(x);
         entity.setY(y);
         entity.setCollapsed(false);
@@ -44,23 +44,23 @@ public class NodeService {
                 .toList();
     }
 
-    public void updateNodeContent(Long nodeId, String content) {
-        NodeEntity entity = nodeRepository.findById(nodeId)
-                .orElseThrow(() -> new EntityNotFoundException("Node not found: " + nodeId));
-        entity.setContent(content);
+    public void updateNodeContent(String id, String text) {
+        NodeEntity entity = nodeRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new EntityNotFoundException("Node not found: " + id));
+        entity.setContent(text);
     }
 
-    public void moveNode(Long nodeId, Double x, Double y) {
-        NodeEntity entity = nodeRepository.findById(nodeId)
-                .orElseThrow(() -> new EntityNotFoundException("Node not found: " + nodeId));
+    public void moveNode(String id, Double x, Double y) {
+        NodeEntity entity = nodeRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new EntityNotFoundException("Node not found: " + id));
         entity.setX(x);
         entity.setY(y);
     }
 
-    public void deleteNode(Long nodeId) {
-        List<Long> idsToDelete = collectSubtreeIds(nodeId);
-        for (Long id : idsToDelete) {
-            edgeRepository.deleteBySourceNodeIdOrTargetNodeId(id, id);
+    public void deleteNode(String id) {
+        List<Long> idsToDelete = collectSubtreeIds(Long.parseLong(id));
+        for (Long nodeId : idsToDelete) {
+            edgeRepository.deleteBySourceNodeIdOrTargetNodeId(nodeId, nodeId);
         }
         nodeRepository.deleteAllById(idsToDelete);
     }
@@ -86,12 +86,12 @@ public class NodeService {
 
     private NodeDTO toDto(NodeEntity entity) {
         NodeDTO dto = new NodeDTO();
-        dto.setId(entity.getId());
-        dto.setMindMapId(entity.getMindMapId());
-        dto.setParentNodeId(entity.getParentNodeId());
-        dto.setContent(entity.getContent());
+        dto.setId(entity.getId().toString());
+        dto.setText(entity.getContent());
         dto.setX(entity.getX());
         dto.setY(entity.getY());
+        dto.setParentId(entity.getParentNodeId() != null ? entity.getParentNodeId().toString() : null);
+        // TODO: Set children list
         dto.setCollapsed(entity.getCollapsed());
         return dto;
     }

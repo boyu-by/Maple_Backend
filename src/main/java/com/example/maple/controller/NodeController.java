@@ -38,11 +38,10 @@ public class NodeController {
     })
     public NodeDTO createNode(@Valid @RequestBody NodeDTO request) {
         return nodeService.createNode(
-                request.getMindMapId(),
-                request.getParentNodeId(),
-                request.getContent(),
+                request.getText(),
                 request.getX(),
-                request.getY()
+                request.getY(),
+                request.getParentId()
         );
     }
 
@@ -53,8 +52,8 @@ public class NodeController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public void updateNodeContent(@PathVariable("id") Long id, @Valid @RequestBody NodeDTO request) {
-        nodeService.updateNodeContent(id, request.getContent());
+    public void updateNodeContent(@PathVariable("id") String id, @Valid @RequestBody NodeDTO request) {
+        nodeService.updateNodeContent(id, request.getText());
     }
 
     @PutMapping("/{id}/position")
@@ -64,7 +63,7 @@ public class NodeController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public void moveNode(@PathVariable("id") Long id, @Valid @RequestBody NodeDTO request) {
+    public void moveNode(@PathVariable("id") String id, @Valid @RequestBody NodeDTO request) {
         nodeService.moveNode(id, request.getX(), request.getY());
     }
 
@@ -75,7 +74,7 @@ public class NodeController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public void deleteNode(@PathVariable("id") Long id) {
+    public void deleteNode(@PathVariable("id") String id) {
         nodeService.deleteNode(id);
     }
 

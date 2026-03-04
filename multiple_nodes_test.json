@@ -1,0 +1,60 @@
+{
+  "nodes": {
+    "1": {
+      "id": "1",
+      "text": "根节点",
+      "x": 400,
+      "y": 300,
+      "width": 120,
+      "height": 44,
+      "parentId": null,
+      "children": ["2", "3"],
+      "collapsed": false
+    },
+    "2": {
+      "id": "2",
+      "text": "子节点1",
+      "x": 550,
+      "y": 250,
+      "width": 120,
+      "height": 44,
+      "parentId": "1",
+      "children": ["node_1", "node_2"],
+      "collapsed": false
+    },
+    "3": {
+      "id": "3",
+      "text": "子节点2",
+      "x": 550,
+      "y": 350,
+      "width": 120,
+      "height": 44,
+      "parentId": "1",
+      "children": [],
+      "collapsed": false
+    },
+    "node_1": {
+      "id": "node_1",
+      "text": "新节点1",
+      "x": 767,
+      "y": 161,
+      "width": 120,
+      "height": 44,
+      "parentId": "2",
+      "children": [],
+      "collapsed": false
+    },
+    "node_2": {
+      "id": "node_2",
+      "text": "新节点2",
+      "x": 769,
+      "y": 326,
+      "width": 120,
+      "height": 44,
+      "parentId": "2",
+      "children": [],
+      "collapsed": false
+    }
+  },
+  "rootIds": ["1"]
+}
