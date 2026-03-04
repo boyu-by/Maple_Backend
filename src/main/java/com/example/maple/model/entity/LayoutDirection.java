@@ -1,4 +1,4 @@
-package model.entity;
+package com.example.maple.model.entity;
 
 public enum LayoutDirection {
     LEFT_RIGHT,
