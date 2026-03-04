@@ -1,0 +1,8 @@
+package com.example.maple.repository;
+
+import com.example.maple.model.entity.MindMapEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MindMapRepository extends JpaRepository<MindMapEntity, Long> {
+    boolean existsById(Long id);
+}
