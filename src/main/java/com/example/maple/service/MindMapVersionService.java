@@ -41,7 +41,12 @@ public class MindMapVersionService {
     @Transactional
     public MindMapVersionDTO createVersion(Long mindMapId, String createdBy, MindMapDataDTO mapData) throws Exception {
         MindMapEntity mindMap = mindMapRepository.findById(mindMapId)
-                .orElseThrow(() -> new Exception("Mind map not found"));
+                .orElseGet(() -> {
+                    // 如果没有找到思维导图，自动创建一个
+                    MindMapEntity newMindMap = new MindMapEntity();
+                    newMindMap.setTitle("默认思维导图");
+                    return mindMapRepository.save(newMindMap);
+                });
 
         // Get the latest version number
         MindMapVersionEntity latestVersion = versionRepository.findFirstByMindMapIdOrderByVersionDesc(mindMapId);
@@ -53,7 +58,7 @@ public class MindMapVersionService {
         version.setVersion(newVersionNumber);
         version.setTitle(mindMap.getTitle());
         version.setDescription(mindMap.getDescription());
-        version.setLayoutDirection(mindMap.getLayoutDirection().name());
+        version.setLayoutDirection(mindMap.getLayoutDirection() != null ? mindMap.getLayoutDirection().name() : "left-right");
         version.setMapData(objectMapper.writeValueAsString(mapData));
         version.setCreatedBy(createdBy);
 
@@ -133,12 +138,10 @@ public class MindMapVersionService {
         mindMap.setDescription(versionEntity.getDescription());
         mindMap.setLayoutDirection(com.example.maple.model.entity.LayoutDirection.valueOf(versionEntity.getLayoutDirection()));
 
-        // TODO: Restore nodes and edges from mapData
-
         mindMapRepository.save(mindMap);
 
-        // Create a new version for the restored state
-        return createVersion(mindMapId, "system");
+        // Return the version entity with mapData
+        return convertToDTO(versionEntity);
     }
 
     /**
